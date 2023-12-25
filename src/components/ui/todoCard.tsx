@@ -1,6 +1,7 @@
 import { TodoItem } from '@/data';
 import { Card, CardDescription, CardTitle } from './card';
 import { cn } from '@/lib/utils';
+import { Checkbox } from './checkbox';
 
 export const TodoCardPlaceholder = () => {
   return (
@@ -16,8 +17,11 @@ type PropType = {
 };
 
 const TodoCard = ({
-  cardData: { title, description, isDraggable },
-}: PropType) => {
+  cardData: { title, description, isDraggable, isCompleted, id },
+  toggleCompleted,
+}: PropType & {
+  toggleCompleted: (id: string) => void;
+}) => {
   return (
     <Card
       className={cn('px-4 py-2  w-[400px]', {
@@ -25,8 +29,23 @@ const TodoCard = ({
         'bg-slate-700 ': !isDraggable,
       })}
     >
-      <CardTitle>{title}</CardTitle>
-      <CardDescription>{description}</CardDescription>
+      <div className='flex justify-between items-center'>
+        <div>
+          <CardTitle className={cn({ 'line-through': isCompleted })}>
+            {title}
+          </CardTitle>
+          <CardDescription className={cn({ 'line-through': isCompleted })}>
+            {description}
+          </CardDescription>
+        </div>
+        <Checkbox
+          className='cursor-pointer'
+          checked={isCompleted}
+          onClick={() => {
+            toggleCompleted(id);
+          }}
+        />
+      </div>
     </Card>
   );
 };
