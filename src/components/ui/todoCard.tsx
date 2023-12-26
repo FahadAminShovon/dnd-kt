@@ -2,6 +2,8 @@ import { TodoItem } from '@/data';
 import { Card, CardDescription, CardTitle } from './card';
 import { cn } from '@/lib/utils';
 import { Checkbox } from './checkbox';
+import { CSS } from '@dnd-kit/utilities';
+import { useSortable } from '@dnd-kit/sortable';
 
 export const TodoCardPlaceholder = () => {
   return (
@@ -22,12 +24,20 @@ const TodoCard = ({
 }: PropType & {
   toggleCompleted: (id: string) => void;
 }) => {
+  const { attributes, listeners, setNodeRef, transform } = useSortable({ id });
+  const style = {
+    transform: CSS.Translate.toString(transform),
+  };
   return (
     <Card
       className={cn('px-4 py-2  w-[400px]', {
         'cursor-grab hover:bg-slate-800': isDraggable,
         'bg-slate-700 ': !isDraggable,
       })}
+      {...attributes}
+      {...listeners}
+      ref={setNodeRef}
+      style={style}
     >
       <div className='flex justify-between items-center'>
         <div>
