@@ -53,12 +53,16 @@ const TodoCard = ({
 export default TodoCard;
 
 export const TodoCardGrabbing = ({
-  cardData: { title, description },
+  cardData: { title, description, isCompleted },
 }: PropType) => {
   return (
     <Card className={cn('px-4 py-2  w-[400px] cursor-grabbing rotate-3')}>
-      <CardTitle>{title}</CardTitle>
-      <CardDescription>{description}</CardDescription>
+      <CardTitle className={cn({ 'line-through': isCompleted })}>
+        {title}
+      </CardTitle>
+      <CardDescription className={cn({ 'line-through': isCompleted })}>
+        {description}
+      </CardDescription>
     </Card>
   );
 };
