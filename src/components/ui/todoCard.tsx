@@ -36,6 +36,7 @@ const TodoCard = ({
     id,
     disabled: !isDraggable,
     data: { cardData },
+    animateLayoutChanges: () => false,
   });
 
   const style = {
