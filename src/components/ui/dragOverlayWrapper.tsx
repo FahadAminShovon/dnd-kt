@@ -1,6 +1,8 @@
-import { Active, DragOverlay, useDndMonitor } from '@dnd-kit/core';
+import { Active, DataRef, DragOverlay, useDndMonitor } from '@dnd-kit/core';
 import { useState } from 'react';
 import { TodoCardGrabbing } from './todoCard';
+import { SortableData } from '@dnd-kit/sortable';
+import { TodoItem } from '@/data';
 
 const DragOverlayWrapper = () => {
   const [draggingComponent, setDraggingComponent] = useState<Active | null>(
@@ -22,14 +24,16 @@ const DragOverlayWrapper = () => {
   if (!draggingComponent) return null;
 
   if (draggingComponent) {
-    const typedData = draggingComponent.data;
+    const typedData = draggingComponent.data as DataRef<
+      { cardData: TodoItem } & SortableData
+    >;
 
-    const data = typedData.current ?? { data: {} };
+    const cardData = typedData?.current?.cardData;
 
-    if (data) {
+    if (cardData) {
       return (
         <DragOverlay>
-          <TodoCardGrabbing cardData={data.cardData} />
+          <TodoCardGrabbing cardData={cardData} />
         </DragOverlay>
       );
     }
