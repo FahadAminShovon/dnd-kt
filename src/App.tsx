@@ -4,6 +4,7 @@ import TodoCard from './components/ui/todoCard';
 import Container from './components/ui/container';
 import { useState } from 'react';
 import {
+  DataRef,
   DndContext,
   DragEndEvent,
   MouseSensor,
@@ -12,6 +13,7 @@ import {
 } from '@dnd-kit/core';
 import {
   SortableContext,
+  SortableData,
   arraySwap,
   rectSwappingStrategy,
 } from '@dnd-kit/sortable';
@@ -40,6 +42,11 @@ function App() {
     const { active, over } = event;
     if (over && active.id && over.id) {
       if (active.id !== over.id) {
+        const typedOverData = over.data as DataRef<
+          { cardData: TodoItem } & SortableData
+        >;
+        if (!typedOverData.current?.cardData.isDraggable) return;
+
         setTodoList((items) => {
           const oldIndex = todoList.findIndex((todo) => todo.id === active.id);
           const newIndex = todoList.findIndex((todo) => todo.id === over.id);
@@ -52,7 +59,7 @@ function App() {
   return (
     <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
       <div className='h-full w-full flex justify-center items-center'>
-        <Container alignment='grid'>
+        <Container alignment='flex'>
           <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
             <SortableContext
               items={todoList.filter((todo) => todo.isDraggable)}
