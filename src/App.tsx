@@ -10,7 +10,12 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { SortableContext, arraySwap } from '@dnd-kit/sortable';
+import {
+  SortableContext,
+  arraySwap,
+  rectSwappingStrategy,
+} from '@dnd-kit/sortable';
+import DragOverlayWrapper from './components/ui/dragOverlayWrapper';
 
 function App() {
   const [todoList, setTodoList] = useState<TodoItem[]>(todoListData);
@@ -47,9 +52,12 @@ function App() {
   return (
     <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
       <div className='h-full w-full flex justify-center items-center'>
-        <Container alignment='flex'>
+        <Container alignment='grid'>
           <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
-            <SortableContext items={todoList}>
+            <SortableContext
+              items={todoList.filter((todo) => todo.isDraggable)}
+              strategy={rectSwappingStrategy}
+            >
               {todoList.map((todo) => (
                 <TodoCard
                   cardData={todo}
@@ -58,6 +66,7 @@ function App() {
                 />
               ))}
             </SortableContext>
+            <DragOverlayWrapper />
           </DndContext>
         </Container>
       </div>

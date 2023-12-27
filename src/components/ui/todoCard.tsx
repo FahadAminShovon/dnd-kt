@@ -2,15 +2,15 @@ import { TodoItem } from '@/data';
 import { Card, CardDescription, CardTitle } from './card';
 import { cn } from '@/lib/utils';
 import { Checkbox } from './checkbox';
-import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 export const TodoCardPlaceholder = () => {
   return (
-    <Card className={cn('px-4 py-2 bg-slate-500 w-[400px]')}>
+    <div>
       <CardTitle>&nbsp;</CardTitle>
       <CardDescription>&nbsp;</CardDescription>
-    </Card>
+    </div>
   );
 };
 
@@ -19,15 +19,30 @@ type PropType = {
 };
 
 const TodoCard = ({
-  cardData: { title, description, isDraggable, isCompleted, id },
+  cardData,
   toggleCompleted,
 }: PropType & {
   toggleCompleted: (id: string) => void;
 }) => {
-  const { attributes, listeners, setNodeRef, transform } = useSortable({ id });
+  const { title, description, isDraggable, isCompleted, id } = cardData;
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id,
+    disabled: !isDraggable,
+    data: { cardData },
+  });
+
   const style = {
-    transform: CSS.Translate.toString(transform),
+    transform: CSS.Transform.toString(transform),
+    transition,
   };
+
   return (
     <Card
       className={cn('px-4 py-2  w-[400px]', {
@@ -39,23 +54,26 @@ const TodoCard = ({
       ref={setNodeRef}
       style={style}
     >
-      <div className='flex justify-between items-center'>
-        <div>
-          <CardTitle className={cn({ 'line-through': isCompleted })}>
-            {title}
-          </CardTitle>
-          <CardDescription className={cn({ 'line-through': isCompleted })}>
-            {description}
-          </CardDescription>
+      {isDragging && <TodoCardPlaceholder />}
+      {!isDragging && (
+        <div className='flex justify-between items-center'>
+          <div>
+            <CardTitle className={cn({ 'line-through': isCompleted })}>
+              {title}
+            </CardTitle>
+            <CardDescription className={cn({ 'line-through': isCompleted })}>
+              {description}
+            </CardDescription>
+          </div>
+          <Checkbox
+            className='cursor-pointer'
+            checked={isCompleted}
+            onClick={() => {
+              toggleCompleted(id);
+            }}
+          />
         </div>
-        <Checkbox
-          className='cursor-pointer'
-          checked={isCompleted}
-          onClick={() => {
-            toggleCompleted(id);
-          }}
-        />
-      </div>
+      )}
     </Card>
   );
 };
@@ -66,7 +84,9 @@ export const TodoCardGrabbing = ({
   cardData: { title, description, isCompleted },
 }: PropType) => {
   return (
-    <Card className={cn('px-4 py-2  w-[400px] cursor-grabbing rotate-3')}>
+    <Card
+      className={cn('px-4 py-2  w-[400px] cursor-grabbing rotate-3 h-[20]')}
+    >
       <CardTitle className={cn({ 'line-through': isCompleted })}>
         {title}
       </CardTitle>
